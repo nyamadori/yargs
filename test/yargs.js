@@ -993,6 +993,7 @@ describe('yargs dsl tests', () => {
         })
         .parse('cmd', (_err, _argv, output) => {
           handlerCalled.should.equal(true)
+          done()
         })
     })
 
