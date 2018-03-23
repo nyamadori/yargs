@@ -546,13 +546,18 @@ function Yargs (processArgs, cwd, parentRequire) {
     if (!shortCircuit) processArgs = args
 
     freeze()
-    if (parseFn) exitProcess = false
 
-    const parsed = self._parseArgs(args, shortCircuit)
-    if (parseFn) parseFn(exitError, parsed, output)
-    unfreeze()
-
-    return parsed
+    if (parseFn) {
+      exitProcess = false
+      self._parseArgs(args, shortCircuit, null, null, function (parsed) {
+        parseFn(exitError, parsed, output)
+        unfreeze()
+      })
+    } else {
+      const parsed = self._parseArgs(args, shortCircuit)
+      unfreeze()
+      return parsed
+    }
   }
 
   self._getParseContext = () => parseContext || {}
@@ -990,7 +995,7 @@ function Yargs (processArgs, cwd, parentRequire) {
     enumerable: true
   })
 
-  self._parseArgs = function parseArgs (args, shortCircuit, _skipValidation, commandIndex) {
+  self._parseArgs = function parseArgs (args, shortCircuit, _skipValidation, commandIndex, callback) {
     let skipValidation = !!_skipValidation
     args = args || processArgs
 
@@ -1043,7 +1048,7 @@ function Yargs (processArgs, cwd, parentRequire) {
               // commands are executed using a recursive algorithm that executes
               // the deepest command first; we keep track of the position in the
               // argv._ array that is currently being executed.
-              return command.runCommand(cmd, self, parsed, i + 1)
+              return command.runCommand(cmd, self, parsed, i + 1, callback)
             } else if (!firstUnknownCommand && cmd !== completionCommand) {
               firstUnknownCommand = cmd
               break
@@ -1053,7 +1058,7 @@ function Yargs (processArgs, cwd, parentRequire) {
           // run the default command, if defined
           if (command.hasDefaultCommand() && !skipDefaultCommand) {
             setPlaceholderKeys(argv)
-            return command.runCommand(null, self, parsed)
+            return command.runCommand(null, self, parsed, null, callback)
           }
 
           // recommend a command if recommendCommands() has
@@ -1071,7 +1076,7 @@ function Yargs (processArgs, cwd, parentRequire) {
         }
       } else if (command.hasDefaultCommand() && !skipDefaultCommand) {
         setPlaceholderKeys(argv)
-        return command.runCommand(null, self, parsed)
+        return command.runCommand(null, self, parsed, null, callback)
       }
 
       // we must run completions first, a user might

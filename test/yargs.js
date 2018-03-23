@@ -979,6 +979,24 @@ describe('yargs dsl tests', () => {
       expect(out2).to.equal('')
     })
 
+    it('calls callback after async command done', (done) => {
+      let handlerCalled = false
+
+      yargs()
+        .command('cmd', 'async command', noop, () => {
+          return new Promise((resolve, reject) => {
+            setTimeout(() => {
+              handlerCalled = true
+              resolve('some result');
+            }, 100);
+          })
+        })
+        .parse('cmd', (_err, _argv, output) => {
+          handlerCalled.should.equal(true)
+          done()
+        })
+    })
+
     describe('commands', () => {
       it('does not invoke command handler if output is populated', () => {
         let err = null
