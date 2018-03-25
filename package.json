@@ -4,9 +4,7 @@
   "description": "yargs the modern, pirate-themed, successor to optimist.",
   "main": "./dist/index.js",
   "files": [
-    "index.js",
-    "yargs.js",
-    "lib",
+    "dist/index.js",
     "locales",
     "completion.sh.hbs",
     "LICENSE"
