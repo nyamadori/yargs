@@ -5,7 +5,7 @@ module.exports = {
   target: 'node',
 
   entry: {
-    yargs: './index.js',
+    index: './index.js',
   },
 
   resolve: {

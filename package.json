@@ -2,7 +2,7 @@
   "name": "yargs",
   "version": "11.1.0",
   "description": "yargs the modern, pirate-themed, successor to optimist.",
-  "main": "./dist/yargs.js",
+  "main": "./dist/index.js",
   "files": [
     "index.js",
     "yargs.js",
